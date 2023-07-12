@@ -30,21 +30,18 @@ export class AuthGuard implements CanActivate {
       });
 
       request['user'] = payload;
-      payload.then((res) => {
-        this.redis
-          .sismember(`user-access-tokens-white-list:${res['sub']}`, res['jti'])
-          .then((value) => {
-            if (!value) throw new UnauthorizedException();
-          })
-          .catch((error) => {
-            console.log(error);
-            return false;
-          });
-      });
-    } catch {
+    } catch (error) {
+      console.log(error);
       throw new UnauthorizedException();
     }
-
+    const result = await request.user.then(async (res) => {
+      return await this.redis
+        .sismember(`user-access-tokens-white-list:${res['sub']}`, res['jti'])
+        .then((value) => {
+          return value !== 0;
+        });
+    });
+    if (!result) throw new UnauthorizedException();
     return true;
   }
 
