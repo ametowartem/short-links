@@ -11,4 +11,9 @@ export const JoiSchema: Joi.ObjectSchema = Joi.object({
   DATABASE_USERNAME: Joi.string().default('root'),
   DATABASE_PASSWORD: Joi.string().default('rootroot'),
   DATABASE_NAME: Joi.string().default('library'),
+  SECRET: Joi.string().default(
+    'DO NOT USE THIS VALUE. INSTEAD, CREATE A COMPLEX SECRET AND KEEP IT SAFE OUTSIDE OF THE SOURCE CODE.',
+  ),
+  EXT: Joi.number().default(604800),
+  SALT_ROUNDS: Joi.number().default(10),
 });

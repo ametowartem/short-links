@@ -1,18 +1,19 @@
 import { Inject, Injectable, UnauthorizedException } from '@nestjs/common';
 import { UserService } from '../user/user.service';
 import { JwtService } from '@nestjs/jwt';
-import { jwtConstant } from './constants';
 import { v4 as uuidv4 } from 'uuid';
 import * as bcrypt from 'bcrypt';
 import IORedis from 'ioredis';
 import { REDIS_PROVIDER } from '../link/link.providers';
 import * as moment from 'moment';
+import { ConfigService } from '../core/service/config.service';
 
 @Injectable()
 export class AuthService {
   constructor(
     private readonly jwtService: JwtService,
     private readonly userService: UserService,
+    private readonly configService: ConfigService,
   ) {}
 
   @Inject(REDIS_PROVIDER)
@@ -32,14 +33,14 @@ export class AuthService {
       username: user.username,
       sub: user.uuid,
       jti: jti,
-      ext: moment().add(jwtConstant.ext, 'seconds').unix(),
+      ext: moment().add(this.configService.ext, 'seconds').unix(),
     };
 
     this.redis.sadd(this.getUserTokenWhiteList(user.uuid), jti);
 
     return {
       accessToken: await this.jwtService.signAsync(payload, {
-        secret: jwtConstant.secret,
+        secret: this.configService.jwtSecret,
       }),
     };
   }

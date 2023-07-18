@@ -6,14 +6,15 @@ import {
 } from '@nestjs/common';
 import { UserEntity } from './user.entity';
 import { UserRepository } from './user.repository';
-import { bcryptConstant } from '../auth/constants';
 import * as bcrypt from 'bcrypt';
 import { CreateUserInterface } from './create-user.interface';
+import { ConfigService } from '../core/service/config.service';
 
 @Injectable()
 export class UserService {
   @Inject(UserRepository)
   private readonly userRepository: UserRepository;
+  private readonly configService: ConfigService;
 
   findAll(): Promise<UserEntity[]> {
     return this.userRepository.find();
@@ -32,7 +33,10 @@ export class UserService {
   }
 
   async registry(UserDto: CreateUserInterface) {
-    const hash = await bcrypt.hash(UserDto.password, bcryptConstant.saltRounds);
+    const hash = await bcrypt.hash(
+      UserDto.password,
+      this.configService.saltRounds,
+    );
     const user = new UserEntity(UserDto.username, hash);
 
     try {

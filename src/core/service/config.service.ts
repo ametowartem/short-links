@@ -52,4 +52,13 @@ export class ConfigService {
   get databaseHost(): string {
     return String(this.envConfig.DATABASE_HOST);
   }
+  get jwtSecret(): string {
+    return String(this.envConfig.SECRET);
+  }
+  get ext(): number {
+    return Number(this.envConfig.EXT);
+  }
+  get saltRounds(): number {
+    return Number(this.envConfig.SALT_ROUNDS);
+  }
 }
