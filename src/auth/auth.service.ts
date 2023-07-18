@@ -6,6 +6,7 @@ import { v4 as uuidv4 } from 'uuid';
 import * as bcrypt from 'bcrypt';
 import IORedis from 'ioredis';
 import { REDIS_PROVIDER } from '../link/link.providers';
+import * as moment from 'moment';
 
 @Injectable()
 export class AuthService {
@@ -31,10 +32,10 @@ export class AuthService {
       username: user.username,
       sub: user.uuid,
       jti: jti,
-      ext: Math.round(new Date().valueOf() * 0.001) + jwtConstant.ext,
+      ext: moment().add(jwtConstant.ext, 'seconds').unix(),
     };
 
-    this.redis.sadd(`user-access-tokens-white-list:${user.uuid}`, jti);
+    this.redis.sadd(this.getUserTokenWhiteList(user.uuid), jti);
 
     return {
       accessToken: await this.jwtService.signAsync(payload, {
@@ -44,11 +45,21 @@ export class AuthService {
   }
 
   async logout(payload) {
-    payload.then(async (result) => {
-      await this.redis.srem(
-        `user-access-tokens-white-list:${result['sub']}`,
-        result['jti'],
-      );
-    });
+    await this.redis.srem(
+      this.getUserTokenWhiteList(payload['sub']),
+      payload['jti'],
+    );
+  }
+
+  getUserTokenWhiteList(id): string {
+    return `user-access-tokens-white-list:${id}`;
+  }
+
+  async checkRedisIsMember(payload): Promise<boolean> {
+    return await this.redis
+      .sismember(this.getUserTokenWhiteList(payload['sub']), payload['jti'])
+      .then((value) => {
+        return value !== 0;
+      });
   }
 }

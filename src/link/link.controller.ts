@@ -7,31 +7,26 @@ import {
   Req,
   Res,
   UseGuards,
-  Headers,
 } from '@nestjs/common';
 import { LinkService } from './link.service';
 import { GetLongLinkParamsRequestDto } from './dto/get-long-link.params.request.dto';
 import { GetShortLinkRequestDto } from './dto/get-short-link.request.dto';
-import { ApiResponse } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiResponse } from '@nestjs/swagger';
 import { GetShortLinkResponseDto } from './dto/get-short-link.response.dto';
 import { AuthGuard } from '../auth/auth.guard';
-import { GetShortLinkParamsRequestDto } from './dto/get-short-link.params.request.dto';
 
 @Controller()
 export class LinkController {
   constructor(private readonly linkService: LinkService) {}
 
   @UseGuards(AuthGuard)
+  @ApiBearerAuth()
   @Put('/link')
   @ApiResponse({
     type: GetShortLinkResponseDto,
     status: 200,
   })
-  async getShortLink(
-    @Body() body: GetShortLinkRequestDto,
-    @Req() request,
-    @Headers() headers: GetShortLinkParamsRequestDto,
-  ) {
+  async getShortLink(@Body() body: GetShortLinkRequestDto, @Req() request) {
     return {
       shortLink: `http://${
         request.headers.host
@@ -40,6 +35,7 @@ export class LinkController {
   }
 
   @Get(':shortLink')
+  @ApiBearerAuth()
   async redirectFromShortLink(
     @Param() dto: GetLongLinkParamsRequestDto,
     @Res() response,

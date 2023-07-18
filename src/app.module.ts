@@ -5,21 +5,28 @@ import { UserEntity } from './user/user.entity';
 import { UserModule } from './user/user.module';
 import { AuthModule } from './auth/auth.module';
 import { LinkModule } from './link/link.module';
+import { ConfigService } from './core/service/config.service';
+import { CoreModule } from './core/core.module';
 @Module({
   imports: [
     AuthModule,
     HttpModule,
     UserModule,
     LinkModule,
-    TypeOrmModule.forRoot({
-      type: 'mysql',
-      host: 'localhost',
-      port: 3306,
-      username: 'root',
-      password: 'rootroot',
-      database: 'library',
-      entities: [UserEntity],
-      synchronize: true,
+    CoreModule,
+    TypeOrmModule.forRootAsync({
+      imports: [CoreModule],
+      useFactory: (configService: ConfigService) => ({
+        type: 'mysql',
+        host: configService.databaseHost,
+        port: configService.databasePort,
+        username: configService.databaseUsername,
+        password: configService.databasePassword,
+        database: configService.databaseName,
+        entities: [UserEntity],
+        migrations: ['src/migrations'],
+      }),
+      inject: [ConfigService],
     }),
   ],
   controllers: [],

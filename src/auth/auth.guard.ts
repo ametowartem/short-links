@@ -1,20 +1,19 @@
 import {
   CanActivate,
   ExecutionContext,
-  Inject,
   Injectable,
   UnauthorizedException,
 } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { jwtConstant } from './constants';
-import { REDIS_PROVIDER } from '../link/link.providers';
-import IORedis from 'ioredis';
+import { AuthService } from './auth.service';
 
 @Injectable()
 export class AuthGuard implements CanActivate {
-  constructor(private jwtService: JwtService) {}
-  @Inject(REDIS_PROVIDER)
-  private readonly redis: IORedis;
+  constructor(
+    private readonly jwtService: JwtService,
+    private readonly authService: AuthService,
+  ) {}
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const request = context.switchToHttp().getRequest();
@@ -24,24 +23,25 @@ export class AuthGuard implements CanActivate {
       throw new UnauthorizedException();
     }
 
+    let result: boolean;
+
     try {
-      const payload = this.jwtService.verifyAsync(token, {
+      const payload = await this.jwtService.verifyAsync(token, {
         secret: jwtConstant.secret,
       });
 
-      request['user'] = payload;
+      request.user = payload;
+
+      result = await this.authService.checkRedisIsMember(payload);
     } catch (error) {
       console.log(error);
       throw new UnauthorizedException();
     }
-    const result = await request.user.then(async (res) => {
-      return await this.redis
-        .sismember(`user-access-tokens-white-list:${res['sub']}`, res['jti'])
-        .then((value) => {
-          return value !== 0;
-        });
-    });
-    if (!result) throw new UnauthorizedException();
+
+    if (!result) {
+      throw new UnauthorizedException();
+    }
+
     return true;
   }
 

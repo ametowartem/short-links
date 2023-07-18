@@ -1,6 +1,15 @@
-import { Inject, Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  Inject,
+  Injectable,
+  InternalServerErrorException,
+} from '@nestjs/common';
 import { UserEntity } from './user.entity';
 import { UserRepository } from './user.repository';
+import { bcryptConstant } from '../auth/constants';
+import * as bcrypt from 'bcrypt';
+import { CreateUserInterface } from './create-user.interface';
+
 @Injectable()
 export class UserService {
   @Inject(UserRepository)
@@ -20,5 +29,20 @@ export class UserService {
   }
   async add(user: UserEntity): Promise<void> {
     await this.userRepository.insert(user);
+  }
+
+  async registry(UserDto: CreateUserInterface) {
+    const hash = await bcrypt.hash(UserDto.password, bcryptConstant.saltRounds);
+    const user = new UserEntity(UserDto.username, hash);
+
+    try {
+      await this.add(user);
+    } catch (e) {
+      if (e.code === 'ER_DUP_ENTRY') {
+        throw new BadRequestException('User already exists');
+      }
+
+      throw new InternalServerErrorException();
+    }
   }
 }

@@ -2,22 +2,18 @@ import {
   Body,
   Controller,
   Get,
-  Headers,
-  HttpCode,
   HttpStatus,
   Post,
   Put,
   Request,
-  Res,
   UseGuards,
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { AuthGuard } from './auth.guard';
 import { SingInRequestDto } from './dto/sing-in.request.dto';
-import { ApiResponse } from '@nestjs/swagger';
+import { ApiResponse, ApiBearerAuth } from '@nestjs/swagger';
 import { SingInResponseDto } from './dto/sing-in.response.dto';
 import { UserPayloadResponseDto } from './dto/user-payload.response.dto';
-import { CheckAuthorizationParamsRequestDto } from './dto/check-authorization.params.request.dto';
 
 @Controller('auth')
 export class AuthController {
@@ -33,24 +29,20 @@ export class AuthController {
   }
 
   @UseGuards(AuthGuard)
+  @ApiBearerAuth()
   @Get('profile')
   @ApiResponse({
     type: UserPayloadResponseDto,
     status: HttpStatus.OK,
   })
-  getProfile(
-    @Request() req,
-    @Headers() headers: CheckAuthorizationParamsRequestDto,
-  ) {
+  getProfile(@Request() req) {
     return req.user;
   }
   @UseGuards(AuthGuard)
+  @ApiBearerAuth()
   @Put('logout')
-  logout(
-    @Request() req,
-    @Headers() headers: CheckAuthorizationParamsRequestDto,
-  ) {
+  async logout(@Request() req) {
     const payload = req.user;
-    this.authService.logout(payload);
+    await this.authService.logout(payload);
   }
 }
