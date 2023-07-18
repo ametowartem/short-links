@@ -1,12 +1,14 @@
 import { Injectable } from '@nestjs/common';
 import { EnvConfig } from '../envConfig';
 import { JoiSchema } from '../envConfigSchema';
+import * as dotenv from 'dotenv';
 
 @Injectable()
 export class ConfigService {
   private readonly envConfig: EnvConfig;
 
   constructor() {
+    dotenv.config();
     this.envConfig = this.validateInput(process.env);
   }
 
