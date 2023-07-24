@@ -35,8 +35,11 @@ export class AuthController {
     type: UserPayloadResponseDto,
     status: HttpStatus.OK,
   })
-  getProfile(@Request() req) {
-    return req.user;
+  getProfile(@Request() req): UserPayloadResponseDto {
+    return new UserPayloadResponseDto({
+      id: req.user.id,
+      username: req.user.username,
+    });
   }
 
   @UseGuards(AuthGuard)

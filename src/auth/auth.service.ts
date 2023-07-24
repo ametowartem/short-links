@@ -7,6 +7,7 @@ import IORedis from 'ioredis';
 import { REDIS_PROVIDER } from '../link/link.providers';
 import * as moment from 'moment';
 import { ConfigService } from '../core/service/config.service';
+import { PayloadInterface } from './payload.interface';
 
 @Injectable()
 export class AuthService {
@@ -29,9 +30,9 @@ export class AuthService {
 
     const jti = uuidv4();
 
-    const payload = {
+    const payload: PayloadInterface = {
       username: user.username,
-      sub: user.uuid,
+      id: user.uuid,
       jti: jti,
       ext: moment().add(this.configService.ext, 'seconds').unix(),
     };
@@ -45,20 +46,17 @@ export class AuthService {
     };
   }
 
-  async logout(payload) {
-    await this.redis.srem(
-      this.getUserTokenWhiteList(payload['sub']),
-      payload['jti'],
-    );
+  async logout(payload: PayloadInterface) {
+    await this.redis.srem(this.getUserTokenWhiteList(payload.id), payload.jti);
   }
 
   getUserTokenWhiteList(id): string {
     return `user-access-tokens-white-list:${id}`;
   }
 
-  async checkRedisIsMember(payload): Promise<boolean> {
+  async checkRedisIsMember(payload: PayloadInterface): Promise<boolean> {
     return await this.redis
-      .sismember(this.getUserTokenWhiteList(payload['sub']), payload['jti'])
+      .sismember(this.getUserTokenWhiteList(payload.id), payload.jti)
       .then((value) => {
         return value !== 0;
       });

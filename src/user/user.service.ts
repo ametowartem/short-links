@@ -14,7 +14,7 @@ import { ConfigService } from '../core/service/config.service';
 export class UserService {
   @Inject(UserRepository)
   private readonly userRepository: UserRepository;
-  private readonly configService: ConfigService;
+  constructor(private readonly configService: ConfigService) {}
 
   findAll(): Promise<UserEntity[]> {
     return this.userRepository.find();
