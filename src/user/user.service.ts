@@ -9,6 +9,7 @@ import { UserRepository } from './user.repository';
 import * as bcrypt from 'bcrypt';
 import { CreateUserInterface } from './create-user.interface';
 import { ConfigService } from '../core/service/config.service';
+import { IAddShortlink } from '../link/interface/add-shortlink.interface';
 
 @Injectable()
 export class UserService {
@@ -30,6 +31,17 @@ export class UserService {
   }
   async add(user: UserEntity): Promise<void> {
     await this.userRepository.insert(user);
+  }
+
+  async addShortLink(dto: IAddShortlink): Promise<void> {
+    await this.userRepository.update(
+      { uuid: dto.user.uuid },
+      {
+        shortLinks: dto.user.shortLinks
+          ? dto.shortLink.concat(',', dto.user.shortLinks)
+          : dto.shortLink,
+      },
+    );
   }
 
   async registry(UserDto: CreateUserInterface) {

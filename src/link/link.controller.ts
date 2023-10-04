@@ -14,10 +14,18 @@ import { GetShortLinkRequestDto } from './dto/get-short-link.request.dto';
 import { ApiBearerAuth, ApiResponse } from '@nestjs/swagger';
 import { GetShortLinkResponseDto } from './dto/get-short-link.response.dto';
 import { AuthGuard } from '../auth/auth.guard';
+import { User } from '../user/decorator/user.decorator';
 
 @Controller()
 export class LinkController {
   constructor(private readonly linkService: LinkService) {}
+
+  @UseGuards(AuthGuard)
+  @ApiBearerAuth()
+  @Get('/shortLinks')
+  getUserLinks(@User() userUuid) {
+    return this.linkService.getUserLinks(userUuid);
+  }
 
   @UseGuards(AuthGuard)
   @ApiBearerAuth()
@@ -30,7 +38,7 @@ export class LinkController {
     return {
       shortLink: `http://${
         request.headers.host
-      }/${await this.linkService.linkToShort(body.link)}`,
+      }/${await this.linkService.linkToShort(body.link, request.user)}`,
     };
   }
 

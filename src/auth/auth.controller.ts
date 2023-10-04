@@ -14,10 +14,14 @@ import { SingInRequestDto } from './dto/sing-in.request.dto';
 import { ApiResponse, ApiBearerAuth } from '@nestjs/swagger';
 import { SingInResponseDto } from './dto/sing-in.response.dto';
 import { UserPayloadResponseDto } from './dto/user-payload.response.dto';
+import { UserService } from '../user/user.service';
 
 @Controller('auth')
 export class AuthController {
-  constructor(private readonly authService: AuthService) {}
+  constructor(
+    private readonly authService: AuthService,
+    private readonly userService: UserService,
+  ) {}
 
   @ApiResponse({
     type: SingInResponseDto,
@@ -35,10 +39,12 @@ export class AuthController {
     type: UserPayloadResponseDto,
     status: HttpStatus.OK,
   })
-  getProfile(@Request() req): UserPayloadResponseDto {
+  async getProfile(@Request() req): Promise<UserPayloadResponseDto> {
+    const user = await this.userService.findOneByUuid(req.user.id);
     return new UserPayloadResponseDto({
-      id: req.user.id,
-      username: req.user.username,
+      id: user.uuid,
+      username: user.username,
+      mail: user.mail,
     });
   }
 

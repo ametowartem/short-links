@@ -4,8 +4,9 @@ import { LinkService } from './link.service';
 import { appProviders } from './link.providers';
 import { CoreModule } from '../core/core.module';
 import { AuthModule } from '../auth/auth.module';
+import { UserModule } from '../user/user.module';
 @Module({
-  imports: [CoreModule, AuthModule],
+  imports: [CoreModule, AuthModule, UserModule],
   controllers: [LinkController],
   providers: [LinkService, ...appProviders],
   exports: [LinkService],
