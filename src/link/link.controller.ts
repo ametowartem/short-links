@@ -22,7 +22,7 @@ export class LinkController {
 
   @UseGuards(AuthGuard)
   @ApiBearerAuth()
-  @Get('/shortLinks')
+  @Get('/userLinks')
   getUserLinks(@User() userUuid) {
     return this.linkService.getUserLinks(userUuid);
   }
