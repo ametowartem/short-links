@@ -34,11 +34,11 @@ export class LinkController {
     type: GetShortLinkResponseDto,
     status: 200,
   })
-  async getShortLink(@Body() body: GetShortLinkRequestDto, @Req() request) {
+  async getShortLink(@Body() body: GetShortLinkRequestDto, @Req() request, @User() userUuid) {
     return {
       shortLink: `http://${
         request.headers.host
-      }/${await this.linkService.linkToShort(body.link, request.user)}`,
+      }/${await this.linkService.linkToShort(body.link, userUuid)}`,
     };
   }
 

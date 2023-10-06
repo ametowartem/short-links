@@ -13,7 +13,7 @@ export class LinkService {
 
   constructor(private readonly userService: UserService) {}
 
-  async linkToShort(longLink: string, reqUser: UserEntity) {
+  async linkToShort(longLink: string, userUuid) {
     if (!longLink.includes('http') || longLink.indexOf('http') !== 0) {
       longLink = `http://${longLink}`;
     }
@@ -25,7 +25,7 @@ export class LinkService {
       this.redis.set(shortLink, longLink);
     }
 
-    const user = await this.userService.findOneByUuid(reqUser.uuid);
+    const user = await this.userService.findOneByUuid(userUuid);
     await this.userService.addShortLink({ user: user, shortLink: shortLink });
 
     return shortLink;
