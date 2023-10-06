@@ -13,6 +13,9 @@ export class UserEntity {
   @Column()
   mail: string;
 
+  @Column({ name: 'avatar_path' })
+  avatarPath: string;
+
   @Column({ name: 'short_links' })
   shortLinks: string;
 

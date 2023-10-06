@@ -7,18 +7,15 @@ import { AuthModule } from './auth/auth.module';
 import { LinkModule } from './link/link.module';
 import { ConfigService } from './core/service/config.service';
 import { CoreModule } from './core/core.module';
-import { join } from 'path';
-import { ServeStaticModule } from '@nestjs/serve-static';
+import { FileModule } from './file/file.module';
 @Module({
   imports: [
     AuthModule,
     HttpModule,
-    ServeStaticModule.forRoot({
-      rootPath: join(__dirname, '..', 'public'),
-    }),
     UserModule,
     LinkModule,
     CoreModule,
+    FileModule,
     TypeOrmModule.forRootAsync({
       imports: [CoreModule],
       useFactory: (configService: ConfigService) => ({

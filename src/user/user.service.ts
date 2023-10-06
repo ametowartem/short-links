@@ -9,7 +9,7 @@ import { UserRepository } from './user.repository';
 import * as bcrypt from 'bcrypt';
 import { CreateUserInterface } from './create-user.interface';
 import { ConfigService } from '../core/service/config.service';
-import { IAddShortlink } from '../link/interface/add-shortlink.interface';
+import { IAddShortlink } from './interface/add-shortlink.interface';
 
 @Injectable()
 export class UserService {
@@ -40,6 +40,15 @@ export class UserService {
         shortLinks: dto.user.shortLinks
           ? dto.shortLink.concat(',', dto.user.shortLinks)
           : dto.shortLink,
+      },
+    );
+  }
+
+  async addAvatar(dto): Promise<void> {
+    await this.userRepository.update(
+      { uuid: dto.user.uuid },
+      {
+        avatarPath: dto.avatarPath,
       },
     );
   }

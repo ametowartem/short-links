@@ -26,7 +26,7 @@ export class LinkService {
     }
 
     const user = await this.userService.findOneByUuid(reqUser.uuid);
-    await this.userService.addShortLink({ user, shortLink });
+    await this.userService.addShortLink({ user: user, shortLink: shortLink });
 
     return shortLink;
   }
