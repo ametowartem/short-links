@@ -31,10 +31,10 @@ export class FileController {
   @Header('Content-Type', 'image/jpeg')
   async getFile(@User() userUuid): Promise<StreamableFile> {
     const user = await this.userService.findOneByUuid(userUuid);
-    if (!user.avatarPath) return;
+    if (!user.avatarPath) throw new NotFoundException();
     const path = join(process.cwd(), user.avatarPath);
     const file = createReadStream(path);
-    console.log(file);
+
     return new StreamableFile(file);
   }
 

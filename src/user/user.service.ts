@@ -3,6 +3,7 @@ import {
   Inject,
   Injectable,
   InternalServerErrorException,
+  NotFoundException,
 } from '@nestjs/common';
 import { UserEntity } from './user.entity';
 import { UserRepository } from './user.repository';
@@ -10,6 +11,7 @@ import * as bcrypt from 'bcrypt';
 import { CreateUserInterface } from './create-user.interface';
 import { ConfigService } from '../core/service/config.service';
 import { IAddShortlink } from './interface/add-shortlink.interface';
+import * as fs from 'fs/promises';
 
 @Injectable()
 export class UserService {
@@ -45,6 +47,16 @@ export class UserService {
   }
 
   async addAvatar(dto): Promise<void> {
+    const user = await this.findOneByUuid(dto.user.uuid);
+
+    if (user.avatarPath) {
+      try {
+        await fs.unlink(user.avatarPath);
+      } catch (err) {
+        console.log(err);
+      }
+    }
+
     await this.userRepository.update(
       { uuid: dto.user.uuid },
       {
