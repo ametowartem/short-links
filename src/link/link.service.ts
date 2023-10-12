@@ -3,7 +3,6 @@ import IORedis from 'ioredis';
 import { REDIS_PROVIDER } from './link.providers';
 import { nanoid } from 'nanoid/non-secure';
 import { UserService } from '../user/user.service';
-import { UserEntity } from '../user/user.entity';
 import * as process from 'process';
 
 @Injectable()
@@ -23,6 +22,7 @@ export class LinkService {
 
     if (!existOnRedis) {
       this.redis.set(shortLink, longLink);
+      this.redis.set(`${shortLink}:redirect`, 0);
     }
 
     const user = await this.userService.findOneByUuid(userUuid);
@@ -37,6 +37,9 @@ export class LinkService {
     if (!existOnRedis) {
       throw new NotFoundException();
     }
+
+    const redirectCount = await this.redis.get(`${shortLink}:redirect`);
+    this.redis.set(`${shortLink}:redirect`, +redirectCount + 1);
 
     return existOnRedis;
   }
@@ -53,6 +56,7 @@ export class LinkService {
       links.push({
         shortLink: `http://${process.env.HOST}:${process.env.PORT}/${el}`,
         link: await this.redis.get(el),
+        redirectCount: await this.redis.get(`${el}:redirect`),
       });
     }
 

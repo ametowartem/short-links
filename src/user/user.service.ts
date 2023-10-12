@@ -3,7 +3,6 @@ import {
   Inject,
   Injectable,
   InternalServerErrorException,
-  NotFoundException,
 } from '@nestjs/common';
 import { UserEntity } from './user.entity';
 import { UserRepository } from './user.repository';
@@ -12,6 +11,7 @@ import { CreateUserInterface } from './create-user.interface';
 import { ConfigService } from '../core/service/config.service';
 import { IAddShortlink } from './interface/add-shortlink.interface';
 import * as fs from 'fs/promises';
+import { IChangeUser } from './interface/change-user.interface';
 
 @Injectable()
 export class UserService {
@@ -33,6 +33,25 @@ export class UserService {
   }
   async add(user: UserEntity): Promise<void> {
     await this.userRepository.insert(user);
+  }
+
+  async changeUser(dto: IChangeUser, user: UserEntity) {
+    const tmp: Partial<UserEntity> = {
+      username: dto.username ? dto.username : undefined,
+      password: dto.password
+        ? await bcrypt.hash(dto.password, this.configService.saltRounds)
+        : undefined,
+      mail: dto.mail ? dto.mail : undefined,
+    };
+    try {
+      await this.userRepository.update({ uuid: user.uuid }, tmp);
+    } catch (e) {
+      if (e.code === 'ER_DUP_ENTRY') {
+        throw new BadRequestException('This username already exists');
+      }
+
+      throw new InternalServerErrorException();
+    }
   }
 
   async addShortLink(dto: IAddShortlink): Promise<void> {

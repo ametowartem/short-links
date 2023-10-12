@@ -1,7 +1,10 @@
-import { Body, Controller, HttpStatus, Post } from '@nestjs/common';
+import { Body, Controller, HttpStatus, Post, UseGuards } from '@nestjs/common';
 import { UserService } from './user.service';
 import { CreateUserRequestDto } from './dto/create-user.request.dto';
-import { ApiResponse } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiResponse } from '@nestjs/swagger';
+import { AuthGuard } from '../auth/auth.guard';
+import { User } from './decorator/user.decorator';
+import { ChangeUserRequestDto } from './dto/change-user.request.dto';
 
 @Controller('user')
 export class UserController {
@@ -16,5 +19,13 @@ export class UserController {
       username: body.username,
       password: body.password,
     });
+  }
+
+  @ApiBearerAuth()
+  @UseGuards(AuthGuard)
+  @Post('change')
+  async changeUser(@Body() dto: ChangeUserRequestDto, @User() userUuid) {
+    const user = await this.userService.findOneByUuid(userUuid);
+    await this.userService.changeUser(dto, user);
   }
 }

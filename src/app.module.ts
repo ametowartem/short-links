@@ -2,17 +2,17 @@ import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { HttpModule } from '@nestjs/axios';
 import { UserEntity } from './user/user.entity';
-import { UserModule } from './user/user.module';
 import { AuthModule } from './auth/auth.module';
 import { LinkModule } from './link/link.module';
 import { ConfigService } from './core/service/config.service';
 import { CoreModule } from './core/core.module';
 import { FileModule } from './file/file.module';
+import { UserHttpModule } from './user/user-http.module';
 @Module({
   imports: [
     AuthModule,
     HttpModule,
-    UserModule,
+    UserHttpModule,
     LinkModule,
     CoreModule,
     FileModule,
