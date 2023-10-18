@@ -8,13 +8,13 @@ import {
   Request,
   UseGuards,
 } from '@nestjs/common';
-import { AuthService } from './auth.service';
-import { AuthGuard } from './auth.guard';
-import { SingInRequestDto } from './dto/sing-in.request.dto';
+import { AuthService } from '../service/auth.service';
+import { AuthGuard } from '../guard/auth.guard';
+import { SingInRequestDto } from '../dto/sing-in.request.dto';
 import { ApiResponse, ApiBearerAuth } from '@nestjs/swagger';
-import { SingInResponseDto } from './dto/sing-in.response.dto';
-import { UserPayloadResponseDto } from './dto/user-payload.response.dto';
-import { UserService } from '../user/user.service';
+import { SingInResponseDto } from '../dto/sing-in.response.dto';
+import { UserPayloadResponseDto } from '../dto/user-payload.response.dto';
+import { UserService } from '../../user/service/user.service';
 
 @Controller('auth')
 export class AuthController {

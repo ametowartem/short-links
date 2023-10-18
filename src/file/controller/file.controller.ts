@@ -16,10 +16,10 @@ import { editFileName } from '../utility/file.utility';
 import { createReadStream } from 'fs';
 import { join } from 'path';
 import { FileRequestDto } from '../dto/file.request.dto';
-import { AuthGuard } from '../../auth/auth.guard';
+import { AuthGuard } from '../../auth/guard/auth.guard';
 import { ApiBearerAuth, ApiBody, ApiConsumes } from "@nestjs/swagger";
 import { User } from '../../user/decorator/user.decorator';
-import { UserService } from '../../user/user.service';
+import { UserService } from '../../user/service/user.service';
 
 @Controller('file')
 export class FileController {

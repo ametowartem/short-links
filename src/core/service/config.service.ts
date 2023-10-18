@@ -1,18 +1,18 @@
 import { Injectable } from '@nestjs/common';
-import { EnvConfig } from '../envConfig';
-import { JoiSchema } from '../envConfigSchema';
+import { EnvConfigConst } from '../const/envConfig.const';
+import { JoiSchema } from '../const/envConfigSchema.const';
 import * as dotenv from 'dotenv';
 
 @Injectable()
 export class ConfigService {
-  private readonly envConfig: EnvConfig;
+  private readonly envConfig: EnvConfigConst;
 
   constructor() {
     dotenv.config();
     this.envConfig = this.validateInput(process.env);
   }
 
-  private validateInput(config: EnvConfig): EnvConfig {
+  private validateInput(config: EnvConfigConst): EnvConfigConst {
     const { error, value: validatedEnvConfig } = JoiSchema.validate(config, {
       allowUnknown: true,
     });

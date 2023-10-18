@@ -1,8 +1,13 @@
-import { Inject, Injectable, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Inject,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import IORedis from 'ioredis';
-import { REDIS_PROVIDER } from './link.providers';
+import { REDIS_PROVIDER } from '../provider/link.provider';
 import { nanoid } from 'nanoid/non-secure';
-import { UserService } from '../user/user.service';
+import { UserService } from '../../user/service/user.service';
 import * as process from 'process';
 
 @Injectable()
@@ -12,18 +17,23 @@ export class LinkService {
 
   constructor(private readonly userService: UserService) {}
 
-  async linkToShort(longLink: string, userUuid) {
+  async linkToShort(longLink: string, userUuid, userLink = undefined) {
     if (!longLink.includes('http') || longLink.indexOf('http') !== 0) {
       longLink = `http://${longLink}`;
     }
+    let shortLink;
+    if (!userLink) {
+      shortLink = nanoid(6);
+    } else {
+      shortLink = userLink;
+    }
 
-    const shortLink = nanoid(6);
     const existOnRedis = await this.redis.get(shortLink);
 
     if (!existOnRedis) {
       this.redis.set(shortLink, longLink);
       this.redis.set(`${shortLink}:redirect`, 0);
-    }
+    } else throw new BadRequestException('Данная ссылка уже существует!');
 
     const user = await this.userService.findOneByUuid(userUuid);
     await this.userService.addShortLink({ user: user, shortLink: shortLink });

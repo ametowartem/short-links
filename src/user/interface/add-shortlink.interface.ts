@@ -1,4 +1,4 @@
-import { UserEntity } from '../user.entity';
+import { UserEntity } from '../entity/user.entity';
 
 export interface IAddShortlink {
   user: UserEntity;

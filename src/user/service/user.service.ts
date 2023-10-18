@@ -4,14 +4,14 @@ import {
   Injectable,
   InternalServerErrorException,
 } from '@nestjs/common';
-import { UserEntity } from './user.entity';
-import { UserRepository } from './user.repository';
+import { UserEntity } from '../entity/user.entity';
+import { UserRepository } from '../repository/user.repository';
 import * as bcrypt from 'bcrypt';
-import { CreateUserInterface } from './create-user.interface';
-import { ConfigService } from '../core/service/config.service';
-import { IAddShortlink } from './interface/add-shortlink.interface';
+import { CreateUserInterface } from '../interface/create-user.interface';
+import { ConfigService } from '../../core/service/config.service';
+import { IAddShortlink } from '../interface/add-shortlink.interface';
 import * as fs from 'fs/promises';
-import { IChangeUser } from './interface/change-user.interface';
+import { IChangeUser } from '../interface/change-user.interface';
 
 @Injectable()
 export class UserService {

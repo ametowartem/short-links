@@ -8,13 +8,13 @@ import {
   Res,
   UseGuards,
 } from '@nestjs/common';
-import { LinkService } from './link.service';
-import { GetLongLinkParamsRequestDto } from './dto/get-long-link.params.request.dto';
-import { GetShortLinkRequestDto } from './dto/get-short-link.request.dto';
+import { LinkService } from '../service/link.service';
+import { GetLongLinkParamsRequestDto } from '../dto/get-long-link.params.request.dto';
+import { GetShortLinkRequestDto } from '../dto/get-short-link.request.dto';
 import { ApiBearerAuth, ApiResponse } from '@nestjs/swagger';
-import { GetShortLinkResponseDto } from './dto/get-short-link.response.dto';
-import { AuthGuard } from '../auth/auth.guard';
-import { User } from '../user/decorator/user.decorator';
+import { GetShortLinkResponseDto } from '../dto/get-short-link.response.dto';
+import { AuthGuard } from '../../auth/guard/auth.guard';
+import { User } from '../../user/decorator/user.decorator';
 
 @Controller()
 export class LinkController {
@@ -34,11 +34,19 @@ export class LinkController {
     type: GetShortLinkResponseDto,
     status: 200,
   })
-  async getShortLink(@Body() body: GetShortLinkRequestDto, @Req() request, @User() userUuid) {
+  async getShortLink(
+    @Body() body: GetShortLinkRequestDto,
+    @Req() request,
+    @User() userUuid,
+  ) {
     return {
       shortLink: `http://${
         request.headers.host
-      }/${await this.linkService.linkToShort(body.link, userUuid)}`,
+      }/${await this.linkService.linkToShort(
+        body.link,
+        userUuid,
+        body.userLink || undefined,
+      )}`,
     };
   }
 

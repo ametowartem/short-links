@@ -1,10 +1,10 @@
 import { Body, Controller, HttpStatus, Post, UseGuards } from '@nestjs/common';
-import { UserService } from './user.service';
-import { CreateUserRequestDto } from './dto/create-user.request.dto';
+import { UserService } from '../service/user.service';
+import { CreateUserRequestDto } from '../dto/create-user.request.dto';
 import { ApiBearerAuth, ApiResponse } from '@nestjs/swagger';
-import { AuthGuard } from '../auth/auth.guard';
-import { User } from './decorator/user.decorator';
-import { ChangeUserRequestDto } from './dto/change-user.request.dto';
+import { AuthGuard } from '../../auth/guard/auth.guard';
+import { User } from '../decorator/user.decorator';
+import { ChangeUserRequestDto } from '../dto/change-user.request.dto';
 
 @Controller('user')
 export class UserController {

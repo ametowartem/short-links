@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
-import { LinkController } from './link.controller';
-import { LinkService } from './link.service';
-import { appProviders } from './link.providers';
+import { LinkController } from './controller/link.controller';
+import { LinkService } from './service/link.service';
+import { appProviders } from './provider/link.provider';
 import { CoreModule } from '../core/core.module';
 import { AuthModule } from '../auth/auth.module';
 import { UserModule } from '../user/user.module';

@@ -1,4 +1,4 @@
-import { UserEntity } from './user/user.entity';
+import { UserEntity } from './user/entity/user.entity';
 import { DataSource } from 'typeorm';
 import * as dotenv from 'dotenv';
 import * as process from 'process';

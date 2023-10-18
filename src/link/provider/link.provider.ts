@@ -1,6 +1,6 @@
 import { Provider } from '@nestjs/common';
 import IORedis from 'ioredis';
-import { ConfigService } from '../core/service/config.service';
+import { ConfigService } from '../../core/service/config.service';
 
 export const REDIS_PROVIDER = 'REDIS_PROVIDER';
 

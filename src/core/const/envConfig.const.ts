@@ -1,3 +1,3 @@
-export class EnvConfig {
+export class EnvConfigConst {
   [key: string]: string | undefined;
 }

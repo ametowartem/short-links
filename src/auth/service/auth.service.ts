@@ -1,13 +1,13 @@
 import { Inject, Injectable, UnauthorizedException } from '@nestjs/common';
-import { UserService } from '../user/user.service';
+import { UserService } from '../../user/service/user.service';
 import { JwtService } from '@nestjs/jwt';
 import { v4 as uuidv4 } from 'uuid';
 import * as bcrypt from 'bcrypt';
 import IORedis from 'ioredis';
-import { REDIS_PROVIDER } from '../link/link.providers';
+import { REDIS_PROVIDER } from '../../link/provider/link.provider';
 import * as moment from 'moment';
-import { ConfigService } from '../core/service/config.service';
-import { PayloadInterface } from './payload.interface';
+import { ConfigService } from '../../core/service/config.service';
+import { PayloadInterface } from '../interface/payload.interface';
 
 @Injectable()
 export class AuthService {

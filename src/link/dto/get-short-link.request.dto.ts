@@ -1,5 +1,11 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsNotEmpty, IsUrl } from 'class-validator';
+import {
+  IsNotEmpty,
+  IsOptional,
+  IsString,
+  IsUrl,
+  MaxLength,
+} from 'class-validator';
 
 export class GetShortLinkRequestDto {
   @ApiProperty({
@@ -8,4 +14,12 @@ export class GetShortLinkRequestDto {
   @IsUrl()
   @IsNotEmpty()
   link: string;
+
+  @ApiProperty({
+    example: 'linay-rush',
+  })
+  @IsString()
+  @IsOptional()
+  @MaxLength(20)
+  userLink?: string;
 }

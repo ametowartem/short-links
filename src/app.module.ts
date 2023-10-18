@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { HttpModule } from '@nestjs/axios';
-import { UserEntity } from './user/user.entity';
+import { UserEntity } from './user/entity/user.entity';
 import { AuthModule } from './auth/auth.module';
 import { LinkModule } from './link/link.module';
 import { ConfigService } from './core/service/config.service';
