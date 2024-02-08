@@ -19,7 +19,7 @@ import { UserHttpModule } from './user/user-http.module';
     TypeOrmModule.forRootAsync({
       imports: [CoreModule],
       useFactory: (configService: ConfigService) => ({
-        type: 'mysql',
+        type: 'postgres',
         host: configService.databaseHost,
         port: configService.databasePort,
         username: configService.databaseUsername,
@@ -27,6 +27,7 @@ import { UserHttpModule } from './user/user-http.module';
         database: configService.databaseName,
         entities: [UserEntity],
         migrations: ['src/migrations'],
+        // synchronize: true,
       }),
       inject: [ConfigService],
     }),

@@ -25,7 +25,7 @@ export class AuthController {
 
   @ApiResponse({
     type: SingInResponseDto,
-    status: HttpStatus.OK,
+    status: HttpStatus.CREATED,
   })
   @Post('/')
   signIn(@Body() body: SingInRequestDto) {

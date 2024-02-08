@@ -1,0 +1,41 @@
+version: "3.7"
+
+services:
+  backend:
+    build: .
+    ports:
+      - "3001:3001"
+    depends_on:
+      -  redis
+      -  postgres
+    restart: always
+
+  frontend:
+    build: ../short-links-fullstack/Client_ShortLink
+    ports:
+      - "3000:3000"
+    restart: always
+
+  redis:
+    image: redis
+    volumes:
+      - ./docker-volumes/redis-data:/data
+    command:
+      - --replica-read-only no
+    ports:
+      - "6379:6379"
+    restart: always
+
+  postgres:
+    image: postgres
+    ports:
+      - "5432:5432"
+    volumes:
+      - ./docker-volumes/postgres/data:/var/lib/postgresql/data
+      - ./docker-volumes/postgres/init:/docker-entrypoint-initdb.d
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+    restart: always
+#    networks:
+#      - short-link-pg
